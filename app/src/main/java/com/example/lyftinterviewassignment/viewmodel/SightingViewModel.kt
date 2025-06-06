@@ -4,6 +4,7 @@ package com.example.lyftinterviewassignment.viewmodel
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
+import com.example.lyftinterviewassignment.Utils.DateUtils
 import com.example.lyftinterviewassignment.model.SightingType
 import com.example.lyftinterviewassignment.model.UFOSighting
 import com.example.lyftinterviewassignment.state.SightingUiState
@@ -28,11 +29,12 @@ class SightingViewModel @Inject constructor() : ViewModel() {
     }
 
     fun addRandomSighting() {
+        val currentTime = DateUtils.getCurrentTime()
         val newSighting = UFOSighting(
             id = System.currentTimeMillis(),
-            date = LocalDate.now(),
+            date = currentTime,
             type = if (Random.nextBoolean()) SightingType.BLOB else SightingType.LAMPSHADE,
-            speed = Random.nextDouble(100.0, 1000.0)
+            speed = Random.nextInt(1,20)
         )
         sightings.add(newSighting)
         _uiState.value = SightingUiState.Success(sightings.toList())

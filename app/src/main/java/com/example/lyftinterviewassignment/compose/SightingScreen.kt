@@ -22,10 +22,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.lyftinterviewassignment.R
@@ -107,10 +112,15 @@ fun SightingItem(
                     contentDescription = "Type"
                 )
                 Spacer(Modifier.width(8.dp))
-                androidx.compose.material3.Text("${sighting.date}")
+                Column {
+                    androidx.compose.material3.Text("${sighting.date}", fontFamily = FontFamily.SansSerif, fontSize = TextUnit(16f,TextUnitType.Sp))
+                    Row {
+                        androidx.compose.material3.Text("${sighting.speed} Knots", fontSize = TextUnit(14f,TextUnitType.Sp), color = Color.Gray)
+                        Spacer(Modifier.width(8.dp))
+                        androidx.compose.material3.Text("${sighting.type}", fontSize = TextUnit(14f,TextUnitType.Sp), color = Color.Gray)
+                    }
+                }
             }
-            androidx.compose.material3.Text("${sighting.speed} Knots")
-            androidx.compose.material3.Text("${sighting.type}")
             if (showRemove) {
                 androidx.compose.material3.Button(onClick = onRemove) {
                     androidx.compose.material3.Text("Remove")
