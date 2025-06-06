@@ -31,16 +31,29 @@ import com.example.lyftinterviewassignment.model.UFOSighting
 import com.example.lyftinterviewassignment.state.SightingUiState
 import com.example.lyftinterviewassignment.viewmodel.SightingViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SightingListScreen(viewModel: SightingViewModel = androidx.hilt.navigation.compose.hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold (
-        floatingActionButton = {
-            FloatingActionButton(onClick = { viewModel.addRandomSighting() }) {
-                Icon(Icons.Default.Add, contentDescription = "Add")
-            }
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = "UFO Sightings")
+                },
+                actions = {
+                    IconButton(onClick = {viewModel.addRandomSighting()}) {
+                        Icon(Icons.Default.Add, "Add")
+                    }
+                }
+            )
         }
+//        floatingActionButton = {
+//            FloatingActionButton(onClick = { viewModel.addRandomSighting() }) {
+//                Icon(Icons.Default.Add, contentDescription = "Add")
+//            }
+//        }
     ) { padding ->
         when (uiState) {
             is SightingUiState.Loading -> {
@@ -58,6 +71,7 @@ fun SightingListScreen(viewModel: SightingViewModel = androidx.hilt.navigation.c
                 LazyColumn(modifier = Modifier.padding(padding)) {
                     items(sightings) { sighting ->
                         var showRemove by remember { mutableStateOf(false) }
+                        Text(text = "this")
                         SightingItem(
                             sighting = sighting,
                             onSelected = { showRemove = !showRemove },
