@@ -32,12 +32,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.lyftinterviewassignment.R
 import com.example.lyftinterviewassignment.model.SightingType
 import com.example.lyftinterviewassignment.model.UFOSighting
 import com.example.lyftinterviewassignment.state.SightingUiState
 import com.example.lyftinterviewassignment.viewmodel.SightingViewModel
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,11 +50,18 @@ fun SightingListScreen(viewModel: SightingViewModel = androidx.hilt.navigation.c
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "UFO Sightings", fontWeight = FontWeight.Bold)
+                    Text(text = "UFO Sightings",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = Color.Black)
                 },
                 actions = {
                     IconButton(onClick = {viewModel.addRandomSighting()}) {
-                        Icon(Icons.Default.Add, "Add")
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add UFO Sighting",
+                            tint = Color(0xFF08A462)
+                        )
                     }
                 }
             )
@@ -95,32 +104,47 @@ fun SightingItem(
     onRemove: () -> Unit,
     showRemove: Boolean
 ) {
-    Card (
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .clickable { onSelected() }
+    Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 64.dp)
+                .padding(vertical = 10.dp)
+                .clickable { onSelected() },
+    verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                val painter: Painter = when (sighting.type) {
-                    SightingType.BLOB -> painterResource(id = R.drawable.blob_medium) // Example
-                    SightingType.LAMPSHADE -> painterResource(id = R.drawable.lampshade_medium) // Example
-                }
-                Image(
-                    painter = painter,
-                    contentDescription = "Type"
-                )
-                Spacer(Modifier.width(8.dp))
-                Column {
-                    androidx.compose.material3.Text("${sighting.date}", fontFamily = FontFamily.SansSerif, fontSize = TextUnit(16f,TextUnitType.Sp))
-                    Row {
-                        androidx.compose.material3.Text("${sighting.speed} Knots", fontSize = TextUnit(14f,TextUnitType.Sp), color = Color.Gray)
-                        Spacer(Modifier.width(8.dp))
-                        androidx.compose.material3.Text("${sighting.type}", fontSize = TextUnit(14f,TextUnitType.Sp), color = Color.Gray)
-                    }
-                }
-            }
+        Box(
+            modifier = Modifier
+                .width(64.dp)
+                .fillMaxHeight(),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painter = painterResource(id = when (sighting.type) {
+                    SightingType.BLOB -> R.drawable.blob_medium // your blob icon
+                    SightingType.LAMPSHADE -> R.drawable.lampshade_medium // your lampshade icon
+                }),
+                contentDescription = null,
+                tint = Color(0xFF08A462),
+                modifier = Modifier.size(28.dp)
+            )
+        }
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            val formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy @ h:mm a")
+            Text(
+                text = sighting.date.format(formatter),
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp,
+                color = Color.Black
+            )
+            Text(
+                text = "${sighting.speed.toInt()} knots · ${if (sighting.type == SightingType.BLOB) "Blob" else "Lamp Shade"}",
+                fontWeight = FontWeight.Normal,
+                fontSize = 14.sp,
+                color = Color.Black.copy(alpha = 0.6f)
+            )
+        }
             if (showRemove) {
                 androidx.compose.material3.Button(onClick = onRemove) {
                     androidx.compose.material3.Text("Remove")
@@ -128,4 +152,4 @@ fun SightingItem(
             }
         }
     }
-}
+
