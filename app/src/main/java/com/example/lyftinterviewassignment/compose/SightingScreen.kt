@@ -22,7 +22,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.lyftinterviewassignment.R
@@ -40,7 +43,7 @@ fun SightingListScreen(viewModel: SightingViewModel = androidx.hilt.navigation.c
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "UFO Sightings")
+                    Text(text = "UFO Sightings", fontWeight = FontWeight.Bold)
                 },
                 actions = {
                     IconButton(onClick = {viewModel.addRandomSighting()}) {
@@ -49,29 +52,24 @@ fun SightingListScreen(viewModel: SightingViewModel = androidx.hilt.navigation.c
                 }
             )
         }
-//        floatingActionButton = {
-//            FloatingActionButton(onClick = { viewModel.addRandomSighting() }) {
-//                Icon(Icons.Default.Add, contentDescription = "Add")
-//            }
-//        }
     ) { padding ->
-        when (uiState) {
+        when (val state = uiState) {
             is SightingUiState.Loading -> {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+                    androidx.compose.material3.CircularProgressIndicator()
                 }
             }
+
             is SightingUiState.Error -> {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text((uiState as SightingUiState.Error).message)
+                    Text(state.message)
                 }
             }
+
             is SightingUiState.Success -> {
-                val sightings = (uiState as SightingUiState.Success).sightings
                 LazyColumn(modifier = Modifier.padding(padding)) {
-                    items(sightings) { sighting ->
+                    items(state.sightings) { sighting ->
                         var showRemove by remember { mutableStateOf(false) }
-                        Text(text = "this")
                         SightingItem(
                             sighting = sighting,
                             onSelected = { showRemove = !showRemove },
@@ -100,23 +98,22 @@ fun SightingItem(
     ) {
         Column(Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
+                val painter: Painter = when (sighting.type) {
+                    SightingType.BLOB -> painterResource(id = R.drawable.blob_medium) // Example
+                    SightingType.LAMPSHADE -> painterResource(id = R.drawable.lampshade_medium) // Example
+                }
                 Image(
-                    painter = painterResource(
-                        id = when (sighting.type) {
-                            SightingType.BLOB -> R.drawable.blob_small
-                            SightingType.LAMPSHADE -> R.drawable.lampshade_small
-                        }
-                    ),
+                    painter = painter,
                     contentDescription = "Type"
                 )
                 Spacer(Modifier.width(8.dp))
-                Text("Type: ${sighting.type}")
+                androidx.compose.material3.Text("${sighting.date}")
             }
-            Text("Date: ${sighting.date}")
-            Text("Speed: ${sighting.speed}")
+            androidx.compose.material3.Text("${sighting.speed} Knots")
+            androidx.compose.material3.Text("${sighting.type}")
             if (showRemove) {
-                Button(onClick = onRemove) {
-                    Text("Remove")
+                androidx.compose.material3.Button(onClick = onRemove) {
+                    androidx.compose.material3.Text("Remove")
                 }
             }
         }

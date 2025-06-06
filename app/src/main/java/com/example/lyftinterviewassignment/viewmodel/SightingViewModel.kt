@@ -24,7 +24,7 @@ class SightingViewModel @Inject constructor() : ViewModel() {
     private val sightings = mutableListOf<UFOSighting>()
 
     init {
-        _uiState.value = SightingUiState.Success(sightings)
+        _uiState.value = SightingUiState.Success(sightings.toList())
     }
 
     fun addRandomSighting() {
